@@ -32,6 +32,7 @@ int main(void)
 	if (errno == 37)
 		ret = EXIT_SUCCESS;
 
+	perror("Status");
 	free(module_image);
 	return ret;
 }
