@@ -1,7 +1,7 @@
 #include <linux/module.h>
 #include <linux/version.h>
 
-#include "khook/engine.c"
+#include "khook/engine.h"
 #include "config.h"
 #include "util.h"
 
@@ -456,7 +456,7 @@ static int __init reptile_init(void)
 	 */
 	atomic_set(&read_on, 0);
 #endif
-	ret = khook_init();
+	ret = khook_init(NULL);
 	if (ret < 0)
 		return ret;
 

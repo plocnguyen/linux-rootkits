@@ -9,14 +9,22 @@ typedef struct {
 	struct {
 		const char	*name;		// target symbol name
 		char		*addr;		// target symbol addr (see khook_lookup_name)
-		char		*addr_map;	// writable mapping of target symbol
 	} target;
 	void			*orig;		// original fn call wrapper
+	void			*stub;		// target fn call wrapper
 	unsigned long		flags;		// hook engine options (flags)
+	unsigned long		nbytes;
+	atomic_t		use_count;
 } khook_t;
 
 #define KHOOK_(t, f)							\
 	static inline typeof(t) khook_##t; /* forward decl */		\
+	static void khook_##t##_orig(void) {				\
+		asm(".rept 0x10\n.byte 0\n.endr\n");			\
+	}								\
+	static void khook_##t##_stub(void) {				\
+		asm(".rept 0x80\n.byte 0\n.endr\n");			\
+	}								\
 	khook_t								\
 	__attribute__((unused))						\
 	__attribute__((aligned(1)))					\
@@ -24,6 +32,8 @@ typedef struct {
 	KHOOK_##t = {							\
 		.fn = khook_##t,					\
 		.target.name = #t,					\
+		.orig = khook_##t##_orig,				\
+		.stub = khook_##t##_stub,				\
 		.flags = f,						\
 	}
 
@@ -42,5 +52,10 @@ typedef struct {
 #define KHOOK_ORIGIN(t, ...)						\
 	((typeof(t) *)KHOOK_##t.orig)(__VA_ARGS__)
 
-extern int khook_init(void);
+typedef unsigned long (*khook_lookup_t)(const char *);
+extern unsigned long khook_lookup_name(const char *);
+
+extern int khook_init(khook_lookup_t);
 extern void khook_cleanup(void);
+
+extern long khook_write_kernel(long (*)(void *), void *);
