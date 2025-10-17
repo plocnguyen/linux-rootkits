@@ -1,5 +1,5 @@
 #include <linux/kmod.h>
-#include <linux/kallsyms.h>
+#include <linux/kprobes.h>
 #include <linux/types.h>
 #include <linux/slab.h>
 #include <linux/mm.h>
@@ -14,6 +14,33 @@
 #include "util.h"
 
 asmlinkage int (*_access_process_vm)(struct task_struct *, unsigned long, void *, int, int);
+
+void *ksym_lookup_name(const char *symbol_name) {
+    static unsigned long (*__kallsyms_lookup_name)(const char *name);
+    if (!__kallsyms_lookup_name) {
+        struct kprobe kp = { .symbol_name = "kallsyms_lookup_name" };
+
+        // Register kprobe to locate the symbol
+        if (register_kprobe(&kp) < 0) {
+            pr_err("Failed to register kprobe for symbol: %s\n", kp.symbol_name);
+            return NULL;
+        }
+        // Retrieve the address
+        unregister_kprobe(&kp);
+
+        if (!kp.addr) {
+            pr_err("Symbol %s not found\n", kp.symbol_name);
+            return NULL;
+        }
+
+        __kallsyms_lookup_name = (void *)kp.addr;
+        pr_info("Address of %s: %llx\n", kp.symbol_name, (u64)kp.addr);
+    }
+
+    u64 addr = __kallsyms_lookup_name(symbol_name);
+    pr_info("%s: %llx\n", symbol_name, addr);
+    return (void *)addr;
+}
 
 int util_init(void)
 {
