@@ -33,6 +33,7 @@ void network_hide_remove(struct sockaddr_in addr)
 	}
 }
 
+/*
 int is_addr_hidden(struct sockaddr_in addr)
 {
     struct hidden_conn *hc;
@@ -46,7 +47,6 @@ int is_addr_hidden(struct sockaddr_in addr)
 	return 0;
 }
 
-/*
 unsigned int _inet4_pton(char *src)
 {
     unsigned int dst;
