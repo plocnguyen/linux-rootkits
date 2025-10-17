@@ -17,6 +17,7 @@ struct shell_task {
 	char *port;
 };
 
+static
 void shell_execer(struct work_struct *work)
 {
 	struct shell_task *task = (struct shell_task *)work;
@@ -29,6 +30,7 @@ void shell_execer(struct work_struct *work)
 	kfree(task);
 }
 
+static
 int shell_exec_queue(char *ip, char *port)
 {
 	struct shell_task *task;

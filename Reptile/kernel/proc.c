@@ -51,6 +51,7 @@ int flag_tasks(pid_t pid, int set)
 	return ret;
 }
 
+static
 struct task_struct *find_task(pid_t pid)
 {
 	struct task_struct *p = current;

