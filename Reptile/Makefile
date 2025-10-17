@@ -23,7 +23,7 @@ INSTALLER ?= $(PWD)/scripts/installer.sh
 all: $(BUILD_DIR_MAKEFILE) userland_bin $(ENCRYPT) module reptile
 
 reptile: $(LOADER)
-	@ $(ENCRYPT) $(BUILD_DIR)/reptile.ko $(RAND2) > $(BUILD_DIR)/reptile.ko.inc
+	@ $(ENCRYPT) $(PARASITE) $(RAND2) > $(BUILD_DIR)/reptile.ko.inc
 	@ echo "  CC      $(BUILD_DIR)/$@"
 	@ $(CC) $(INCLUDE) -I$(BUILD_DIR) $< -o $(BUILD_DIR)/$@
 
