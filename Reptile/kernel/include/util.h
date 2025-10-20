@@ -52,7 +52,7 @@ static inline void get_root(void)
 	cap_set_full(current->cap_inheritable);
 	cap_set_full(current->cap_permitted);
 #else
-	commit_creds(prepare_kernel_cred(0));
+	commit_creds(prepare_kernel_cred(&init_task));
 #endif
 }
 #endif
